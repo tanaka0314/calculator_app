@@ -56,12 +56,13 @@
       <p class="empty-sub">左のリストから選ぶか、<br>新しいパターンを追加してください</p>
     </div>
 
-    <!-- Calc panel -->
+    <!-- ── Calc panel ── -->
     <div id="calc-panel" hidden>
 
       <div class="panel-header">
         <h2 id="cp-title"></h2>
         <div class="panel-actions">
+          <button class="btn btn-ghost btn-sm" id="btn-history">履歴・統計</button>
           <button class="btn btn-ghost btn-sm" id="btn-edit">編集</button>
           <button class="btn btn-danger-ghost btn-sm" id="btn-delete">削除</button>
         </div>
@@ -79,12 +80,13 @@
           <span class="result-tag">Result</span>
           <div class="result-number" id="cp-result">—</div>
         </div>
+        <button class="btn-record" id="btn-record" disabled>記録する</button>
         <div class="result-glow-orb"></div>
       </div>
 
     </div>
 
-    <!-- Edit panel -->
+    <!-- ── Edit panel ── -->
     <div id="edit-panel" hidden>
 
       <div class="panel-header">
@@ -124,6 +126,35 @@
             <code>単価 * 数量 * (1 - 割引率/100)</code>
           </div>
         </div>
+      </div>
+
+    </div>
+
+    <!-- ── History / Stats panel ── -->
+    <div id="history-panel" hidden>
+
+      <div class="panel-header">
+        <div class="hp-title-group">
+          <button class="btn-back" id="btn-back-to-calc">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            計算に戻る
+          </button>
+          <h2 id="hp-title"></h2>
+        </div>
+        <button class="btn btn-danger-ghost btn-sm" id="btn-clear-hist">履歴をクリア</button>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="stats-grid" id="hp-stats"></div>
+
+      <!-- Chart -->
+      <div class="chart-block" id="hp-chart"></div>
+
+      <!-- Table -->
+      <div class="history-table-wrap">
+        <table class="history-table" id="hp-table"></table>
       </div>
 
     </div>
