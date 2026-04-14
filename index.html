@@ -4,100 +4,144 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>計算パターン帳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>
-  <h1>📐 計算パターン帳</h1>
-  <button class="btn btn-outline btn-sm" id="btn-new-top"
-          style="border-color:#fff;color:#fff;"
-          onmouseover="this.style.background='rgba(255,255,255,.15)'"
-          onmouseout="this.style.background='transparent'">
-    ＋ 新規追加
-  </button>
-</header>
-
 <div class="app-body">
 
-  <!-- Sidebar -->
+  <!-- ── Sidebar ── -->
   <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>パターン一覧</h2>
+
+    <div class="sidebar-brand">
+      <div class="brand-mark">∫</div>
+      <div class="brand-text">
+        <span class="brand-name">計算パターン帳</span>
+        <span class="brand-sub">Formula Calculator</span>
+      </div>
     </div>
+
+    <div class="sidebar-section-header">
+      <span class="section-label">Patterns</span>
+      <button class="btn-icon" id="btn-new-top" title="新規追加">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
     <ul id="pattern-list"></ul>
+
     <div class="sidebar-footer">
-      <button class="btn btn-primary" id="btn-new-bottom" style="width:100%">＋ 新しいパターン</button>
+      <button class="btn-add" id="btn-new-bottom">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        新しいパターン
+      </button>
     </div>
+
   </aside>
 
-  <!-- Detail -->
+  <!-- ── Main ── -->
   <main class="detail" id="detail">
 
     <!-- Empty state -->
     <div class="empty-msg" id="empty-msg">
-      <span class="icon">📋</span>
-      <p>パターンを選択するか、<br>新しいパターンを追加してください。</p>
+      <div class="empty-glyph">f(x)</div>
+      <p class="empty-title">パターンを選択</p>
+      <p class="empty-sub">左のリストから選ぶか、<br>新しいパターンを追加してください</p>
     </div>
 
     <!-- Calc panel -->
     <div id="calc-panel" hidden>
-      <div class="card">
-        <div class="card-header">
-          <h2 id="cp-title"></h2>
-          <div class="card-actions">
-            <button class="btn btn-outline btn-sm" id="btn-edit">編集</button>
-            <button class="btn btn-danger btn-sm" id="btn-delete">削除</button>
-          </div>
-        </div>
-        <div class="formula-box" id="cp-formula"></div>
-        <div id="cp-vars"></div>
-        <div class="result-box">
-          <span class="result-label">結果</span>
-          <span class="result-value" id="cp-result">—</span>
+
+      <div class="panel-header">
+        <h2 id="cp-title"></h2>
+        <div class="panel-actions">
+          <button class="btn btn-ghost btn-sm" id="btn-edit">編集</button>
+          <button class="btn btn-danger-ghost btn-sm" id="btn-delete">削除</button>
         </div>
       </div>
+
+      <div class="formula-block">
+        <div class="block-label">Formula</div>
+        <code id="cp-formula"></code>
+      </div>
+
+      <div class="vars-grid" id="cp-vars"></div>
+
+      <div class="result-block">
+        <div class="result-inner">
+          <span class="result-tag">Result</span>
+          <div class="result-number" id="cp-result">—</div>
+        </div>
+        <div class="result-glow-orb"></div>
+      </div>
+
     </div>
 
     <!-- Edit panel -->
     <div id="edit-panel" hidden>
-      <div class="card">
-        <h2 id="edit-title">パターンを追加</h2>
 
-        <div class="form-field">
-          <label for="ep-name">パターン名</label>
-          <input type="text" id="ep-name" placeholder="例: 消費税込み価格" autocomplete="off">
-        </div>
+      <div class="panel-header">
+        <h2 id="edit-title">新しいパターン</h2>
+      </div>
 
-        <div class="form-field">
-          <label for="ep-formula">数式 (四則演算 + 括弧)</label>
-          <textarea id="ep-formula" rows="3"
-            placeholder="例: 税抜価格 * (1 + 税率 / 100)&#10;&#10;変数名は日本語もOKです"></textarea>
-          <div class="vars-preview" id="ep-vars-preview"></div>
-          <div class="error" id="ep-error" hidden></div>
-        </div>
+      <div class="form-field">
+        <label for="ep-name">パターン名</label>
+        <input type="text" id="ep-name" placeholder="例: 消費税込み価格" autocomplete="off">
+      </div>
 
-        <div class="form-actions">
-          <button class="btn btn-primary" id="btn-save">保存</button>
-          <button class="btn btn-ghost" id="btn-cancel">キャンセル</button>
+      <div class="form-field">
+        <label for="ep-formula">数式</label>
+        <textarea id="ep-formula" rows="3"
+          placeholder="例: 税抜価格 * (1 + 税率 / 100)&#10;変数名は日本語・英字どちらもOK"></textarea>
+        <div class="vars-preview" id="ep-vars-preview"></div>
+        <div class="error" id="ep-error" hidden></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btn-save">保存する</button>
+        <button class="btn btn-ghost" id="btn-cancel">キャンセル</button>
+      </div>
+
+      <div class="help-block">
+        <div class="help-label">数式の書き方</div>
+        <div class="help-rows">
+          <div class="help-row">
+            <code>税率</code><code>price</code>
+            <span>日本語・英字どちらも変数名に使えます</span>
+          </div>
+          <div class="help-row">
+            <code>+</code><code>-</code><code>*</code><code>/</code><code>( )</code>
+            <span>四則演算と括弧</span>
+          </div>
+          <div class="help-row">
+            <code>単価 * 数量 * (1 - 割引率/100)</code>
+          </div>
         </div>
       </div>
 
-      <!-- Help card -->
-      <div class="card" style="font-size:.88rem;color:#555;line-height:1.7">
-        <strong>📝 数式の書き方</strong>
-        <ul style="margin-top:8px;padding-left:1.2em">
-          <li>変数名に日本語・英字が使えます（例: <code>税率</code>, <code>price</code>）</li>
-          <li>演算子: <code>+ - * /</code> と括弧 <code>( )</code></li>
-          <li>例: <code>単価 * 数量 * (1 - 割引率/100)</code></li>
-          <li>保存後、変数ごとに入力欄が自動で作られます</li>
-        </ul>
-      </div>
     </div>
 
   </main>
 </div>
 
 <script type="module" src="app.js"></script>
+<script>
+  // Result pulse on value change
+  const r = document.getElementById('cp-result');
+  if (r) {
+    new MutationObserver(() => {
+      r.classList.remove('pulse');
+      void r.offsetWidth;
+      r.classList.add('pulse');
+    }).observe(r, { childList: true, characterData: true, subtree: true });
+  }
+</script>
 </body>
 </html>
