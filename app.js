@@ -78,10 +78,10 @@ const btnClearHist   = document.getElementById('btn-clear-hist');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function hideAll() {
-  emptyMsg.hidden    = true;
-  calcPanel.hidden   = true;
-  editPanel.hidden   = true;
-  historyPanel.hidden = true;
+  emptyMsg.hidden  = true;
+  calcPanel.hidden = true;
+  editPanel.hidden = true;
+  if (historyPanel) historyPanel.hidden = true;
 }
 
 function showEmpty() {

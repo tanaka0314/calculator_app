@@ -420,9 +420,8 @@ body {
   background: var(--s1);
   border: 1px solid var(--border-hi);
   border-radius: 16px;
-  padding: 36px 44px;
+  padding: 32px 40px 28px;
   overflow: hidden;
-  isolation: isolate;
 }
 
 .result-block::before {
@@ -431,22 +430,21 @@ body {
   top: 0; left: 0; right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent) 60%, transparent 100%);
+  pointer-events: none;
 }
 
-.result-glow-orb {
+.result-block::after {
+  content: '';
   position: absolute;
-  bottom: -60px;
+  bottom: -80px;
   left: 50%;
   transform: translateX(-50%);
-  width: 340px;
-  height: 160px;
-  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+  width: 380px;
+  height: 180px;
+  background: radial-gradient(ellipse, rgba(245,158,11,0.18) 0%, transparent 70%);
   pointer-events: none;
-  z-index: 0;
-  filter: blur(10px);
+  filter: blur(12px);
 }
-
-.result-inner { position: relative; z-index: 1; }
 
 .result-tag {
   display: block;
@@ -455,18 +453,23 @@ body {
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: .13em;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   opacity: .85;
+  position: relative;
+  z-index: 1;
 }
 
 .result-number {
   font-family: var(--display);
-  font-size: 4.4rem;
+  font-size: 4rem;
   font-weight: 800;
-  color: var(--accent);
-  text-shadow: 0 0 50px var(--accent-glow);
+  color: #ffffff;
   line-height: 1;
   letter-spacing: -.02em;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
+  word-break: break-all;
 }
 
 @keyframes pulse-result {
@@ -661,25 +664,17 @@ body {
 /* ═══════════════════════════════════════════════════════
    RECORD BUTTON (in result block)
    ═══════════════════════════════════════════════════════ */
-.result-block {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.result-inner { flex: 1; }
-
 .btn-record {
-  flex-shrink: 0;
-  align-self: flex-end;
-  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
   background: var(--accent-dim);
   border: 1px solid rgba(245,158,11,0.28);
   border-radius: 8px;
   color: var(--accent);
   font-family: var(--body);
-  font-size: .855rem;
+  font-size: .875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all .15s var(--ease);
@@ -690,10 +685,13 @@ body {
 .btn-record:hover:not(:disabled) {
   background: var(--accent-mid);
   border-color: rgba(245,158,11,0.5);
-  box-shadow: 0 0 16px rgba(245,158,11,0.18);
+  box-shadow: 0 0 18px rgba(245,158,11,0.2);
 }
 .btn-record:active:not(:disabled) { transform: scale(.97); }
-.btn-record:disabled { cursor: default; }
+.btn-record:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
 
 /* ═══════════════════════════════════════════════════════
    HISTORY PANEL

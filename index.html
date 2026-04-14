@@ -50,7 +50,7 @@
   <main class="detail" id="detail">
 
     <!-- Empty state -->
-    <div class="empty-msg" id="empty-msg">
+    <div class="empty-msg" id="empty-msg" hidden>
       <div class="empty-glyph">f(x)</div>
       <p class="empty-title">パターンを選択</p>
       <p class="empty-sub">左のリストから選ぶか、<br>新しいパターンを追加してください</p>
@@ -76,12 +76,9 @@
       <div class="vars-grid" id="cp-vars"></div>
 
       <div class="result-block">
-        <div class="result-inner">
-          <span class="result-tag">Result</span>
-          <div class="result-number" id="cp-result">—</div>
-        </div>
+        <div class="result-tag">Result</div>
+        <div class="result-number" id="cp-result">—</div>
         <button class="btn-record" id="btn-record" disabled>記録する</button>
-        <div class="result-glow-orb"></div>
       </div>
 
     </div>
