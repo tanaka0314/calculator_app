@@ -4,7 +4,8 @@ import {
   deleteEntry, clearPatternHistory, getStats,
 } from './history.js';
 
-const STORAGE_KEY = 'keisan.patterns';
+const STORAGE_KEY  = 'keisan.patterns';
+const SHARED_KEY   = 'keisan.sharedVars';
 
 const SAMPLES = [
   { id: 's1', name: '消費税込み価格', formula: '税抜価格 * (1 + 税率 / 100)' },
@@ -15,7 +16,8 @@ const SAMPLES = [
 ];
 
 // ── State ────────────────────────────────────────────────────────────────────
-let patterns  = [];
+let patterns    = [];
+let sharedVars  = {};   // { [varName]: string }  全パターン共通の入力値
 let selectedId  = null;
 let editingId   = null;
 let currentAst  = null;
@@ -33,6 +35,29 @@ function loadPatterns() {
 
 function savePatterns() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(patterns));
+}
+
+// ── Shared vars persistence ───────────────────────────────────────────────────
+function loadSharedVars() {
+  try { sharedVars = JSON.parse(localStorage.getItem(SHARED_KEY) || '{}'); }
+  catch { sharedVars = {}; }
+}
+
+function saveSharedVars() {
+  localStorage.setItem(SHARED_KEY, JSON.stringify(sharedVars));
+}
+
+// 変数名 → 使用パターン名[] の逆引き（自分以外）
+function buildVarIndex(excludeId) {
+  const idx = {};
+  patterns.forEach(p => {
+    if (p.id === excludeId) return;
+    try {
+      const { variables } = parse(p.formula);
+      variables.forEach(v => (idx[v] ||= []).push(p.name));
+    } catch {}
+  });
+  return idx;
 }
 
 function genId() {
@@ -133,11 +158,8 @@ function showCalcPanel() {
   currentAst  = ast;
   currentVars = variables;
 
-  // 変数入力欄を生成（値は保持）
-  const prevValues = {};
-  cpVarsArea.querySelectorAll('input[data-var]').forEach(el => {
-    prevValues[el.dataset.var] = el.value;
-  });
+  // 変数入力欄を生成（sharedVars から横断プリフィル）
+  const varIndex = buildVarIndex(p.id);  // この変数を使う他パターン名[]
 
   cpVarsArea.innerHTML = '';
   if (variables.length === 0) {
@@ -165,11 +187,28 @@ function showCalcPanel() {
     input.id = `var-${name}`;
     input.dataset.var = name;
     input.placeholder = '数値を入力';
-    input.value = prevValues[name] ?? '';
+    input.value = sharedVars[name] ?? '';
 
-    input.addEventListener('input', () => recalc(ast, variables));
+    input.addEventListener('input', () => {
+      if (input.value === '') delete sharedVars[name];
+      else sharedVars[name] = input.value;
+      saveSharedVars();
+      recalc(ast, variables);
+    });
+
     row.appendChild(label);
     row.appendChild(input);
+
+    // 他パターンでも同名変数が使われていればチップを表示
+    const others = varIndex[name];
+    if (others && others.length > 0) {
+      const chip = document.createElement('span');
+      chip.className = 'var-shared-chip';
+      chip.title = `共有先: ${others.join(', ')}`;
+      chip.textContent = `↔ ${others.length}`;
+      row.appendChild(chip);
+    }
+
     cpVarsArea.appendChild(row);
   });
 
@@ -495,6 +534,7 @@ function pad(n) { return String(n).padStart(2, '0'); }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 loadPatterns();
+loadSharedVars();
 renderList();
 
 if (patterns.length > 0) {
